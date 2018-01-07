@@ -1,4 +1,12 @@
 /*
+  GoPro Hero black 5/6 Interface for 3DR Solo
+  Based on all the great work from Konrad Iturbe (KonradIT)
+  https://github.com/KonradIT/goprowifihack
+  NOT FOR COMMERCIAL USE!
+  This API will be updated as I get access to newly released cameras, 
+  if you are a company, I highly recommend to enroll in the GoPro developer program.  
+  Stephan Schindewolf, January 2018
+  
   Firmata is a generic protocol for communicating with microcontrollers
   from software on a host computer. It is intended to work with
   any host computer software package.
@@ -1038,15 +1046,172 @@ void loop()
       case 45:
          cameraVideoResWVGA();
          break;
-      // functions 46 to 83 yet to be implemented
-       }
+      case 46:
+         cameraVideo240fps();
+         break;
+      case 47:
+         cameraVideo120fps();
+         break;
+      case 48:
+         cameraVideo100fps();
+         break;
+      case 49:
+         cameraVideo90fps();
+         break;
+      case 50:
+         cameraVideo80fps();
+         break;
+      case 51:
+         cameraVideo60fps();
+         break;
+      case 52:
+         cameraVideo50fps();
+         break;
+      case 53:
+         cameraVideo48fps();
+         break;
+      case 54:
+         cameraVideo30fps();
+         break;
+      case 55:
+         cameraVideo25fps();
+         break;
+      case 56:
+         cameraVideo24fps();
+         break;
+      case 57:
+         cameraFOVwide();
+         break;
+      case 58:
+         cameraFOVmedium();
+         break;
+      case 59:
+         cameraFOVnarrow();
+         break;
+      case 60:
+         cameraFOVsuperview();
+         break;
+      case 61:
+         cameraFOVlinear();
+         break;
+      case 62:
+         cameraLowLighton();
+         break;
+      case 63:
+         cameraLowLightoff();
+         break;
+      case 64:
+         cameraPhotoRes12MP();
+         break;
+      case 65:
+         cameraPhotoRes7MPwide();
+         break;
+      case 66:
+         cameraPhotoRes7MPmedium();
+         break;
+      case 67:
+         cameraPhotoRes5MP();
+         break;
+      case 68:
+         cameraMultRes12MP();
+         break;
+      case 69:
+         cameraMultRes7MPwide();
+         break;
+      case 70:
+         cameraMultRes7MPmedium();
+         break;
+      case 71:
+         cameraMultRes5MP();
+         break;
+      case 72:
+         cameraBurst31();
+         break;
+      case 73:
+         cameraBurst51();
+         break;
+      case 74:
+         cameraBurst101();
+         break;
+      case 75:
+         cameraBurst102();
+         break;
+      case 76:
+         cameraBurst103();
+         break;
+      case 77:
+         cameraBurst301();
+         break;
+      case 78:
+         cameraBurst302();
+         break;
+      case 79:
+         cameraBurst303();
+         break;
+      case 80:
+         cameraBurst306();
+         break;
+      case 81:
+         cameraNTSC();
+         break;
+      case 82:
+         cameraPAL();
+         break;
+      case 83:
+         cameraPTvideoOn();
+         break;
+      case 84:
+         cameraPTvideoOff();
+         break;
+      case 85:
+         cameraPTphotoOn();
+         break;
+      case 86:
+         cameraPTphotoOff();
+         break;
+      case 87:
+         cameraPTburstOn();
+         break;
+      case 88:
+         cameraPTburstOff();
+         break;
+      case 89:
+         cameraSecVideo();
+         break;
+      case 90:
+         cameraSecTimLapseVideo();
+         break;
+      case 91:
+         cameraVidPhoto();
+         break;
+      case 92:
+         cameraLoopVideo();
+         break;
+      case 93:
+         cameraSinglePhoto();
+         break;
+      case 94:
+         cameraContPhoto();
+         break;
+      case 95:
+         cameraNightPhoto();
+         break;
+      case 96:
+         cameraBurstMultshot();
+         break;
+      case 97:
+         cameraTimelapseMultShot();
+         break;
+      case 98:
+         cameraNightlapseMultShot();
+         break;
+    }  
   }
   else {
      if (gpFunctionpattern[7] == false && (gpFunctionpattern[7] != gplastFunctionpattern[7])) {
         gplastFunctionpattern[7] = gpFunctionpattern[7];
      }
   } 
-
 }
 
 
@@ -1379,7 +1544,70 @@ void cameraPAL(void){
    requestURL = String ("GET /gp/gpControl/setting/57/1 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
    sendRequest(requestURL);
 }
-
+void cameraPTvideoOn(void){
+   requestURL = String ("GET /gp/gpControl/setting/10/1 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraPTvideoOff(void){
+   requestURL = String ("GET /gp/gpControl/setting/10/0 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraPTphotoOn(void){
+   requestURL = String ("GET /gp/gpControl/setting/21/1 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraPTphotoOff(void){
+   requestURL = String ("GET /gp/gpControl/setting/21/0 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraPTburstOn(void){
+   requestURL = String ("GET /gp/gpControl/setting/34/1 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraPTburstOff(void){
+   requestURL = String ("GET /gp/gpControl/setting/34/0 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraSecVideo(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=0&sub_mode=0 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraSecTimLapseVideo(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=0&sub_mode=1 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraVidPhoto(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=0&sub_mode=2 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraLoopVideo(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=0&sub_mode=3 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraSinglePhoto(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=1&sub_mode=0 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraContPhoto(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=1&sub_mode=1 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraNightPhoto(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=1&sub_mode=2 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraBurstMultshot(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=2&sub_mode=0 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraTimelapseMultShot(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=2&sub_mode=1 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
+void cameraNightlapseMultShot(void){
+   requestURL = String ("GET /gp/gpControl/command/sub_mode?mode=2&sub_mode=2 HTTP/1.1\r\n") + "Host: " + gpserver + "\r\n";
+   sendRequest(requestURL);
+}
 
 void sendRequest(String thisRequest){
   client.stop();
