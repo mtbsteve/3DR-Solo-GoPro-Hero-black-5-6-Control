@@ -2,4 +2,4 @@
 Necessary APIs and functions to control a Hero black 5 or 6 from3DR Solo app or Solex
 
 Note: Work in progress, currently the git only contains the Arduino sketch
-Requres an wifi capable Arduino such as the MKR1000
+Requires an wifi capable Arduino such as the MKR1000
