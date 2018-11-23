@@ -61,7 +61,8 @@ logger.log("[shotmanager]: try to open Arduino PyMata")
 self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
 logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
 
- 2.3. Setup your Gopro
+ 2.3. Setup your Gopro:
+ 
 A current limitation is that Solo does not know the Gopro settings when we turn it on. Therefore, gopromanager assumes a default setting of your Gopro and you need to ensure that you have the following parameters set in your Gopro:
 
 Capture Mode: Video
@@ -98,6 +99,7 @@ Note that your Gopro may crash and requires a reboot if you try the Hero 4 photo
 Note: the code includes a workaround to switch to 1080p Linear by selecting the "narrow" FOV in Solex instead
 
 5. To Dos:
+
 on my to do list:
 - Add automatic Gopro model detection.
 - Determine a fix for the photo resolution settings and burst mode settings
