@@ -11,9 +11,9 @@ Video see here: https://youtu.be/H4vh83SqS-Y
 
 1. Prerequisites:
 Requires an wifi capable Arduino such as the MKR1000
-A Micro USB cable to connect the MKR1000 to the IMX6 of Solo.
-A Solo breakoutboard with an USB connector (not mandatory, but will save you to break out the USB port yourself)
-Some LEDs to display the wifi status
+- A Micro USB cable to connect the MKR1000 to the IMX6 of Solo.
+- A Solo breakoutboard with an USB connector (not mandatory, but will save you to break out the USB port yourself)
+- Some LEDs to display the wifi status
 
 2. How to install:
 
@@ -92,7 +92,7 @@ All feature settings in Solex are supported with the exceptions are listed in th
 4. Exceptions and known limitations:
 
 The newer Gopro models differ in several areas from the Hero 4. In order to get it working with the current Solex version, we set the GoPro model to a Hero 4, which causes that some settings do not work yet:
-- Photo resolutions other than 12MP wide listed in the Solex menue. Reason is that the Hero 4 modes (5MP, 7MP) do not exist namymore, insted, the newer models support Linear modes and more.
+- Photo resolutions other than 12MP wide listed in the Solex menue. Reason is that the Hero 4 modes (5MP, 7MP) do not exist anymore, insted, the newer models support Linear modes and more.
 Note that your Gopro may crash and requires a reboot if you try the Hero 4 photo and burst settings!
 - Burst mode other than 12MP wide settings (see above)
 - Newer video formats along with new frame rates and FOV settings
