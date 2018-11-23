@@ -59,7 +59,6 @@ in the gopromanager.py file.
 
 Next, edit shotmanager.py and add the following line in the import section:
 
-# Pymata import
 from PyMata.pymata import PyMata
 
 Then, add the following lines for the connection to the Arduino in the start routine of shotmanager.py:
