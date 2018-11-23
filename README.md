@@ -17,7 +17,7 @@ Some LEDs to display the wifi status
 
 2. How to install:
 
-   2.1. Hardware setup:
+2.1. Hardware setup:
 Solder the LEDs to the A1 and A3 pins of the MKR1000. Use a 50 Ohm resistor to avoid overload.
 Red goes on A1, green goes on A3.
 LED Status indicator:
@@ -29,7 +29,7 @@ LED Status indicator:
 Connect the Arduino MKR1000 USB to the IMX USB port
 A 20cm micro to micro USB cable can be found on eg Amazon or eBay for a couple of bucks
 
-   2.2. Software setup:
+ 2.2. Software setup:
    
     2.2.1. Install Pymata on your Solo.
 You must have PyMata version 2.1 installed on Solo. Newer versions than 2.1 do not properly install on Solo. To download PyMata, go here: https://github.com/MrYsLab/pymata-aio
@@ -61,7 +61,7 @@ logger.log("[shotmanager]: try to open Arduino PyMata")
 self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
 logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
 
-    2.2.4. Setup your Gopro
+ 2.3. Setup your Gopro
 A current limitation is that Solo does not know the Gopro settings when we turn it on. Therefore, gopromanager assumes a default setting of your Gopro and you need to ensure that you have the following parameters set in your Gopro:
 
 Capture Mode: Video
