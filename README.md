@@ -56,10 +56,12 @@ SOLO_MOD = ""
 
 in the gopromanager.py file.
 
-Next, edit shotmanager.py and add the connection to the Arduino in the start routine:
+Next, edit shotmanager.py and add the 3 lines below for the connection to the Arduino in the start routine:
 
 logger.log("[shotmanager]: try to open Arduino PyMata")
+
 self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
+
 logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
 
 2.3. Setup your Gopro:
