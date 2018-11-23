@@ -52,22 +52,21 @@ SSH into Solo, go to the /usr/bin directory and upload the gopromanager.py and g
 Note: by default, gopromanager tries to connect through the Arduino.
 If you want to switch back to standard functionality with a Hero4 connected through the 3DR Gimbal, then set the constant:
 
-SOLO_MOD = "GOPRO" to
-SOLO_MOD = ""
+    SOLO_MOD = "GOPRO"
+  to
+    SOLO_MOD = ""
 
 in the gopromanager.py file.
 
 Next, edit shotmanager.py and add the following line in the import section:
 
-from PyMata.pymata import PyMata
+    from PyMata.pymata import PyMata
 
 Then, add the following lines for the connection to the Arduino in the start routine of shotmanager.py:
 
-logger.log("[shotmanager]: try to open Arduino PyMata")
-
-self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
-
-logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
+    logger.log("[shotmanager]: try to open Arduino PyMata")
+    self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
+    logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
 
 # 2.3. Setup your Gopro:
  
