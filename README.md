@@ -83,6 +83,8 @@ You may change those defaults of course in the gopromanager.py file
 
 Don't foreget to turn on your gopro wifi.
 
+Note: Gopro and Solo are both broadcasting over 2.4 GHz wifi on separate channels. While I have not encountered any interference or issues, it cannot be ruled out that interference could happen under certain circumstances. 
+
 3. Features:
 
 All feature settings in Solex are supported with the exceptions are listed in the next section.
