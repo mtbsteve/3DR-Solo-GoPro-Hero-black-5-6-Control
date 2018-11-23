@@ -99,6 +99,7 @@ Note that your Gopro may crash and requires a reboot if you try the Hero 4 photo
 - Newer features like Linear, Hyperlapse, EIS, RAW, WDR
 - Whitebalance, ISO, Color, manual exposure settings
 - Setting of EV and protune in other modes than video (also never worked with a Hero 4)
+
 Note: the code includes a workaround to switch to 1080p Linear by selecting the "narrow" FOV in Solex instead
 
 5. To Dos:
