@@ -90,8 +90,7 @@ All feature settings in Solex are supported with the exceptions are listed in th
 4. Exceptions and known limitations:
 
 The Gopro will not turn on or off automatically.
-The newer Gopro models differ in several areas from the Hero 4.
-So far, the following settings do not work yet:
+The newer Gopro models differ in several areas from the Hero 4. In order to get it working with the current Solex version, we set the GoPro model to a Hero 4, which causes that some settings do not work yet:
 - Photo resolutions other than 12MP wide listed in the Solex menue. Reason is that the Hero 4 modes (5MP, 7MP) do not exist namymore, insted, the newer models support Linear modes and more.
 Note that your Gopro may crash and requires a reboot if you try the Hero 4 photo and burst settings!
 - Burst mode other than 12MP wide settings (see above)
