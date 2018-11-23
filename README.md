@@ -46,6 +46,8 @@ Then upload the sketch.
 
 # 2.2.3. Install necessary files on Solo
 
+Note: This mod is compatible with stock firmware and OpenSolo, green cube and the stock black cube.
+
 Important Note: backup all Solo gopromanager and shotmanager files before uploading the new code so that you can revert back in case something goes south.
 
 SSH into Solo, go to the /usr/bin directory and upload the gopromanager.py and goproconstants.py files
