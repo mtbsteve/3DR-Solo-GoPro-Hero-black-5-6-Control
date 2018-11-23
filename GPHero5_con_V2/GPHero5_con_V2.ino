@@ -780,16 +780,16 @@ void systemResetCallback()
 
 void setup()
 {
-  pinMode(0, INPUT); // Pin 0 to 5 used to transfer the GP commands
+  pinMode(0, INPUT); // Pin 0 to 6 used to transfer the GP commands
   pinMode(1, INPUT);
   pinMode(2, INPUT);
   pinMode(3, INPUT);
   pinMode(4, INPUT);
   pinMode(5, INPUT);
-  pinMode(6, INPUT); // Handshake
-  pinMode(7, INPUT); //GP switch on/off
+  pinMode(6, INPUT); 
+  pinMode(7, INPUT); // Handshake to execute the GoPro command
   pinMode(A1, OUTPUT); // red: high as long as no GoPro wifi connection established
-  pinMode(A2, OUTPUT); // greeen: high once GoPro is fully connected - both LEDs on means wifi hardware error
+  pinMode(A3, OUTPUT); // greeen: high once GoPro is fully connected - both LEDs on means wifi hardware error
   digitalWrite(A1, HIGH); // no wifi yet
 
   Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
@@ -822,7 +822,7 @@ void setup()
     //Serial.println("WiFi shield not present");
     // don't continue:
     digitalWrite(A1, HIGH); // Error no wifi shield - 
-    digitalWrite(A2, HIGH); // no wifi shield - do not continue
+    digitalWrite(A3, HIGH); // no wifi shield - do not continue
     while (true);
   }
 
@@ -880,20 +880,17 @@ void loop()
 
 // *********************** GoPro control *********************************************
   pinMode(A1, OUTPUT); // high as long as no GoPro wifi connection established
-  pinMode(A2, OUTPUT); // high once GoPro is fully connected
+  pinMode(A3, OUTPUT); // high once GoPro is fully connected
 // check GoPro WiFi connection:
   if(WiFi.status() != WL_CONNECTED) {
-    digitalWrite(A1, HIGH); 
-    digitalWrite(A2, LOW); // wifi not connected to GoPro
     connectToGoPro();
-    digitalWrite(A1, LOW); 
-    digitalWrite(A2, HIGH); // wifi connected to GoPro
   }
-
+  //Serial.println("in the loop and connected!");
 // check if handshake took place, then read command number
   gpFunctionpattern[7] = digitalRead(7);
   if (gpFunctionpattern[7] == true && (gpFunctionpattern[7] != gplastFunctionpattern[7])) {
      gplastFunctionpattern[7] = gpFunctionpattern[7];
+     digitalWrite(A1, HIGH); // visualize read
      int gpCommand = 0;
      int bitValue[] = {1, 2, 4, 8, 16, 32, 64};
      for(int i=0; i<7; i++){
@@ -1210,8 +1207,10 @@ void loop()
   else {
      if (gpFunctionpattern[7] == false && (gpFunctionpattern[7] != gplastFunctionpattern[7])) {
         gplastFunctionpattern[7] = gpFunctionpattern[7];
+        digitalWrite(A1, LOW); // turn off
+        } 
+
      }
-  } 
 }
 
 
@@ -1617,19 +1616,19 @@ void sendRequest(String thisRequest){
     client.println(thisRequest);
     client.println("Connection: close");
     client.println();
-    digitalWrite(A1, LOW); 
-    digitalWrite(A2, HIGH); // all good  
     //Serial.println("sent to server: " + thisRequest);
   }
   else {
     // if you couldn't make a connection:
-    digitalWrite(A1, HIGH); // no wifi yet
-    digitalWrite(A2, LOW);  
+    digitalWrite(A1, HIGH); // no connection yet
+    digitalWrite(A3, LOW);  
     // you're connected now to the GoPro network, now lets check if the GoPro is turned on:
     // wakeup GoPro if needed
     while (!client.connect(gpserver, 80)) {
       cameraOn(gopro_mac);
     }
+    digitalWrite(A1, LOW); 
+    digitalWrite(A3, HIGH); // all good  
   }
 }
 
@@ -1653,8 +1652,8 @@ void cameraOn(byte mac[]) {
     Udp.write(magicPacket, sizeof magicPacket);
     Udp.endPacket();
     Udp.stop();
-    delay(5000);
-    // Serial.println("wakeup sent!");
+    delay(4000);
+    //Serial.print("wakeup sent!");
 }
 
 void connectToGoPro() {
@@ -1663,7 +1662,10 @@ void connectToGoPro() {
     //Serial.println(ssid);
     // Connect to WPA/WPA2 network:
     WiFi.begin(ssid, pass);
-    // wait 6 seconds for connection:
-    delay(6000);
+    // wait 7 seconds for connection:
+    delay(7000);
   }
+  //Serial.print("Connected to GoPro Hero 5/6");
+  digitalWrite(A1, LOW); 
+  digitalWrite(A3, HIGH); // wifi connected to GoPro
 }
