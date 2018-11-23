@@ -10,7 +10,7 @@ https://github.com/KonradIT/goprowifihack/blob/master/README.md
 Video see here: https://youtu.be/H4vh83SqS-Y
 
 1. Prerequisites:
-Requires an wifi capable Arduino such as the MKR1000
+- Requires an wifi capable Arduino such as the MKR1000
 - A Micro USB cable to connect the MKR1000 to the IMX6 of Solo.
 - A Solo breakoutboard with an USB connector (not mandatory, but will save you to break out the USB port yourself)
 - Some LEDs to display the wifi status
