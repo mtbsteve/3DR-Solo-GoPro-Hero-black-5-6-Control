@@ -7,7 +7,7 @@ This repro will get updated with new features and bug fixes over time.
 Based on the work of Konrad Iturbe (KonradIT) Thank you for your great work!
 https://github.com/KonradIT/goprowifihack/blob/master/README.md
 
-Video see here:
+Video see here: https://youtu.be/H4vh83SqS-Y
 
 1. Prerequisites:
 Requires an wifi capable Arduino such as the MKR1000
