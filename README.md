@@ -11,8 +11,8 @@ Video see here: https://youtu.be/H4vh83SqS-Y
 
 # 1. Prerequisites:
 - Requires an wifi capable Arduino such as the MKR1000
-- A Micro USB cable to connect the MKR1000 to the IMX6 of Solo.
-- A Solo breakoutboard with an USB connector (not mandatory, but will save you to break out the USB port yourself)
+- A Micro USB cable to connect the MKR1000 to the IMX6 of Solo. You can find a micro to micro USB cable on Amazon or eBay  
+- A Solo breakoutboard with an USB connector (not mandatory, but will save you a lot of time to break out the USB port yourself)
 - Some LEDs to display the wifi status
 
 # 2. How to install:
@@ -28,8 +28,6 @@ LED Status indicator:
 - solid green and flashing red LED: indicates data transfer from Solo to GoPro
 
 Connect the Arduino MKR1000 USB to the IMX USB port.
-
-A 20cm micro to micro USB cable can be found on eg Amazon or eBay for a couple of bucks
 
 # 2.2. Software setup:
    
@@ -53,12 +51,18 @@ Important Note: backup all Solo gopromanager and shotmanager files before upload
 SSH into Solo, go to the /usr/bin directory and upload the gopromanager.py and goproconstants.py files
 Note: by default, gopromanager tries to connect through the Arduino.
 If you want to switch back to standard functionality with a Hero4 connected through the 3DR Gimbal, then set the constant:
+
 SOLO_MOD = "GOPRO" to
 SOLO_MOD = ""
 
 in the gopromanager.py file.
 
-Next, edit shotmanager.py and add the 3 lines below for the connection to the Arduino in the start routine:
+Next, edit shotmanager.py and add the following line in the import section:
+
+# Pymata import
+from PyMata.pymata import PyMata
+
+Then, add the following lines for the connection to the Arduino in the start routine of shotmanager.py:
 
 logger.log("[shotmanager]: try to open Arduino PyMata")
 
@@ -70,16 +74,16 @@ logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
  
 A current limitation is that Solo does not know the Gopro settings when we turn it on. Therefore, gopromanager assumes a default setting of your Gopro and you need to ensure that you have the following parameters set in your Gopro:
 
-Capture Mode: Video
-Video Format: PAL
-Video Resolution: 1080p
-Video Frame rate: 50FPS
-FOV: Linear (yes!)
-LowLifgt: on
-Photo Resolution: 12MP wide (limitation with the newer Gopros and Solex at the moment)
-Burst Rate 5/1
-Protune: on
-EV setting 0
+- Capture Mode: Video
+- Video Format: PAL
+- Video Resolution: 1080p
+- Video Frame rate: 50FPS
+- FOV: Linear (yes!)
+- LowLifgt: on
+- Photo Resolution: 12MP wide (limitation with the newer Gopros and Solex at the moment)
+- Burst Rate 5/1
+- Protune: on
+- EV setting 0
 
 You may change those defaults of course in the gopromanager.py file
 
