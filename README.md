@@ -106,3 +106,5 @@ Note: the code includes a workaround to switch to 1080p Linear by selecting the 
 on my to do list:
 - Add automatic Gopro model detection.
 - Determine a fix for the photo resolution settings and burst mode settings
+- Work on an adaptor to fit the HERO5/6/7 into the Solo gimbal
+
