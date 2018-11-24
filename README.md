@@ -90,7 +90,8 @@ You may change those defaults of course in the gopromanager.py file
 
 Don't foreget to turn on your gopro wifi.
 
-Note: Gopro and Solo are both broadcasting over 2.4 GHz wifi on separate channels. While I have not encountered any interference or issues, it cannot be ruled out that interference could happen under certain circumstances. 
+Note: Gopro and Solo are both broadcasting over 2.4 GHz wifi on separate channels. While I have not encountered any interference or issues, it cannot be ruled out that interference could happen under certain circumstances.
+To eliminate possible interference with the GPS, use the 3DR V2 shield or even better the dedicated 3M EMI protection fabric to shield the GPS and Solo main board from the Gopro. Do NOT USE the stock copper shield or any cardboard mods.
 
 # 3. Features
 
