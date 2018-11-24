@@ -17,7 +17,7 @@ Video see here: https://youtu.be/H4vh83SqS-Y
 
 # 2. How to install
 
-# 2.1. Hardware setup
+## 2.1. Hardware setup
 
 Solder the LEDs to the A1 and A3 pins of the MKR1000. Use a 50 Ohm resistor to avoid overload.
 Red goes on A1, green goes on A3.
@@ -29,13 +29,13 @@ LED Status indicator:
 
 Connect the Arduino MKR1000 USB to the IMX USB port.
 
-# 2.2. Software setup
+## 2.2. Software setup
    
-# 2.2.1. Install Pymata on your Solo
+### 2.2.1. Install Pymata on your Solo
 
 You must have PyMata version 2.1 installed on Solo. Newer versions than 2.1 do not properly install on Solo. To download PyMata, go here: https://github.com/MrYsLab/pymata-aio
 
-# 2.2.2. Install the Arduino Sketch on the MKR 1000
+### 2.2.2. Install the Arduino Sketch on the MKR 1000
 Ensure that you have installed the required Arduino MKR1000 libraries in the Arduino workbench
 Load the sketch into the Arduino workbench and change the Wifi settings according to your GoPro. You need to set your:
 - SSID
@@ -44,7 +44,7 @@ Load the sketch into the Arduino workbench and change the Wifi settings accordin
 
 Then upload the sketch.
 
-# 2.2.3. Install necessary files on Solo
+### 2.2.3. Install necessary files on Solo
 
 Note: This mod is compatible with stock firmware and OpenSolo, green cube and the stock black cube.
 
@@ -71,7 +71,7 @@ Then, add the following lines for the connection to the Arduino in the start rou
     self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
     logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
 
-# 2.3. Setup your Gopro
+## 2.3. Setup your Gopro
  
 A current limitation is that Solo does not know the Gopro settings when we turn it on. Therefore, gopromanager assumes a default setting of your Gopro and you need to ensure that you have the following parameters set in your Gopro:
 
@@ -90,7 +90,9 @@ You may change those defaults of course in the gopromanager.py file
 
 Don't foreget to turn on your gopro wifi.
 
-Note: Gopro and Solo are both broadcasting over 2.4 GHz wifi on separate channels. While I have not encountered any interference or issues, it cannot be ruled out that interference could happen under certain circumstances.
+**Note:
+
+> Gopro and Solo are both broadcasting over 2.4 GHz wifi on separate channels. While I have not encountered any interference or issues, it cannot be ruled out that interference could happen under certain circumstances.
 To eliminate possible interference with the GPS, use the 3DR V2 shield or even better the dedicated 3M EMI protection fabric to shield the GPS and Solo main board from the Gopro. Do NOT USE the stock copper shield or any cardboard mods.
 
 # 3. Features
