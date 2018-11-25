@@ -33,7 +33,7 @@ Connect the Arduino MKR1000 USB to the IMX USB port.
    
 ### 2.2.1. Install Pymata on your Solo
 
-You must have PyMata version 2.1 installed on Solo. Newer versions than 2.1 do not properly install on Solo. To download PyMata, go here: https://github.com/MrYsLab/pymata-aio
+You must have PyMata version 2.1 installed on Solo. Newer versions than 2.1 do not properly install on Solo. To download PyMata, go here: https://github.com/MrYsLab/pymata
 
 ### 2.2.2. Install the Arduino Sketch on the MKR 1000
 Ensure that you have installed the required Arduino MKR1000 libraries in the Arduino workbench
@@ -60,16 +60,6 @@ to
     SOLO_MOD = ""
 
 in the gopromanager.py file.
-
-Next, edit shotmanager.py and add the following line in the import section:
-
-    from PyMata.pymata import PyMata
-
-Then, add the following lines for the connection to the Arduino in the start routine of shotmanager.py:
-
-    logger.log("[shotmanager]: try to open Arduino PyMata")
-    self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
-    logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
 
 ## 2.3. Setup your Gopro
  
