@@ -17,6 +17,9 @@ import settings
 import shotLogger
 import struct
 
+# Pymata import
+from PyMata.pymata import PyMata
+
 logger = shotLogger.logger
 SOLO_MOD = "GOPRO"
 GOPRO_FLUSH = 7
@@ -90,6 +93,11 @@ class GoProManager():
     def __init__(self, shotMgr):
         # GoPro heartbeat state
         if SOLO_MOD == "GOPRO":
+            logger.log("[shotmanager]: try to open Arduino PyMata")
+            self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
+            logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
+            # here we add the check for the Gopro model
+            # in the meantime we treat it as a Hero 4
             self.status=2
             self.model = MODEL_HERO4_BLACK
             self.captureMode = CAPTURE_MODE_VIDEO
@@ -374,7 +382,7 @@ class GoProManager():
             
             if command == 0 and (value[0] == 0 or value [0] == 1):   
                 self.setGoProCommandArduino(value[0]) #toggle vide recording on/off 
-                if self.isRecording == 0 and self.captureMode == 0:
+                if self.isRecording == 0 and self.captureMode == 0 and value [0] == 1:
                     self.isRecording = 1
                 else:
                     self.isRecording = 0
@@ -826,14 +834,14 @@ class GoProManager():
         #logger.log("[gopro-arduino]: bitarray received before sending to Arduino: %s"%(bitarr))
         try:
             # send the bitstring to the Arduino pins
-            self.shotMgr.arduinoBoard.digital_write(GOPRO_FLUSH, 0)
+            self.arduinoBoard.digital_write(GOPRO_FLUSH, 0)
             for i in range(7):
-                self.shotMgr.arduinoBoard.digital_write(i, int(bitarr[i]))
+                self.arduinoBoard.digital_write(i, int(bitarr[i]))
                 time.sleep(0.1)
             #flush and execute the command, then reset 
-            self.shotMgr.arduinoBoard.digital_write(GOPRO_FLUSH, 1)
-            time.sleep(0.5)   #give time to execute on the Gopro side
-            self.shotMgr.arduinoBoard.digital_write(GOPRO_FLUSH, 0)
+            self.arduinoBoard.digital_write(GOPRO_FLUSH, 1)
+            time.sleep(0.3)   #give time to execute on the Gopro side
+            self.arduinoBoard.digital_write(GOPRO_FLUSH, 0)
             logger.log("[gopro-arduino]: bitarray sent to Arduino: %s"%(bitarr))
         except:   
             logger.log("[gopro-arduino]: Error in communication to Arduino")
