@@ -69,7 +69,7 @@ A current limitation is that Solo does not know the Gopro settings when we turn 
 - Video Resolution: 1080p
 - Video Frame rate: 50FPS
 - FOV: Linear (yes!)
-- LowLifgt: on
+- LowLight: on
 - Photo Resolution: 12MP wide (limitation with the newer Gopros and Solex at the moment)
 - Burst Rate 5/1
 - Protune: on
@@ -100,9 +100,9 @@ The newer Gopro models differ in several areas from the Hero 4. In order to get 
 - Newer features like Linear, Hyperlapse, EIS, RAW
 - Whitebalance, ISO, Color, manual exposure settings (also never worked with a Hero 4)
 - Setting of EV and protune in other modes than video (also never worked with a Hero 4)
-- The Gopro will not turn off automatically.
+- The Gopro will not turn off automatically. (Current limitation is in the Arducopter code - may be fixed with AC3.7)
 
 # 5. To do list
 - Check if menu extensions to support the new features can be added to Solex
-- Work on an adaptor to fit the HERO5/6/7 into the Solo gimbal
+- Work on a mod to fit the HERO5/6/7 into the Solo gimbal (someone need to sponsor a broken or trashed gimbal to try out the modding)
 
