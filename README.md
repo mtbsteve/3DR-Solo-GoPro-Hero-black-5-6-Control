@@ -13,21 +13,22 @@ Video see here: https://youtu.be/H4vh83SqS-Y
 - Requires an wifi capable Arduino such as the MKR1000
 - A Micro USB cable to connect the MKR1000 to the IMX6 of Solo. You can find a micro to micro USB cable on Amazon or eBay  
 - A Solo breakoutboard with an USB connector (not mandatory, but will save you a lot of time to break out the USB port yourself)
-- Some LEDs to display the wifi status
+- A red and a green LEDs to display the wifi status
 
 # 2. How to install
 
 ## 2.1. Hardware setup
 
-Solder the LEDs to the A1 and A3 pins of the MKR1000. Use a 50 Ohm resistor to avoid overload.
-Red goes on A1, green goes on A3.
-LED Status indicator:
-- Solid red and green LED: wifi card error
-- Solid red and no green LED: Waiting to connect to Gopro WiFi
-- solid green and no red LED: connected
-- solid green and flashing red LED: indicates data transfer from Solo to GoPro
-
+Solder the red LED to the A1 pin and the green LED to the A3 pin of the MKR1000. Use a 50 Ohm resistor to avoid overload.
 Connect the Arduino MKR1000 USB to the IMX USB port.
+
+LED Status indicator:
+- Red and green LED off,green on board LED on: board is powered, waiting for Solo to finalize GoproManager initialization.
+- Blinking red and green LED: wifi card error
+- Solid red and no green LED: Initialized but no Gopro in range
+- Solid red and solid green LED: connected to Gopro, trying to wake it up if in sleep mode
+- Solid green and no red LED: connection to Gopro established.
+- Solid green and flashing red LED: indicates data transfer from Solo to GoPro
 
 ## 2.2. Software setup
    
@@ -36,11 +37,9 @@ Connect the Arduino MKR1000 USB to the IMX USB port.
 You must have PyMata version 2.1 installed on Solo. Newer versions than 2.1 do not properly install on Solo. To download PyMata, go here: https://github.com/MrYsLab/pymata
 
 ### 2.2.2. Install the Arduino Sketch on the MKR 1000
-Ensure that you have installed the required Arduino MKR1000 libraries in the Arduino workbench
-Load the sketch into the Arduino workbench and change the Wifi settings according to your GoPro. You need to set your:
-- SSID
-- Password
-- MAC Address
+Ensure that you have installed the required Arduino MKR1000 libraries in the Arduino workbench. In particular, the wifi101 lib and the ArduinoJSON lib. Both libraries can be selected and downloaded in the Arduino workbench library manager tool.
+
+Load the sketch into the Arduino workbench and change the Wifi settings according to your GoPro in the arduino_secrets.h file. You can enter the ssid and password credentials for up to 3 different Gopros.
 
 Then upload the sketch.
 
@@ -85,24 +84,25 @@ To eliminate possible interference with the GPS, use the 3DR V2 shield or even b
 
 # 3. Features
 
+Compatible with Gopro Hero 5 Black and Hero 5 Session, Hero 6 Black and Hero 7 Black.
 All feature settings in Solex are supported with the exceptions are listed in the next section.
+The software supports in addition the major cool features of the Hero 5, 6, and 7 models, such as video stabilization, linear mode, 4K60FPS, Timewarp, Superphoto, and so on. Note that such features are not (yet) accessible threough Solex since some extensions to the current camera menus are needed.
+
+- The software  recognizes the camera model connected. 
+- Gopro will automaticallly turn on when Solo is powered on if the camera is in sleep mode
 
 # 4. Exceptions and known limitations
 
 The newer Gopro models differ in several areas from the Hero 4. In order to get it working with the current Solex version, we set the GoPro model to a Hero 4, which causes that some settings do not work yet:
-- Photo resolutions other than 12MP wide listed in the Solex menue. Reason is that the Hero 4 modes (5MP, 7MP) do not exist anymore, insted, the newer models support Linear modes and more.
-Note that your Gopro may crash and requires a reboot if you try the Hero 4 photo and burst settings!
-- Burst mode other than 12MP wide settings (see above)
-- Newer video formats along with new frame rates and FOV settings
-- Newer features like Linear, Hyperlapse, EIS, RAW, WDR
-- Whitebalance, ISO, Color, manual exposure settings
-- Setting of EV and protune in other modes than video (also never worked with a Hero 4)
-- The Gopro will not turn on or off automatically.
 
-Note: the code includes a workaround to switch to 1080p Linear by selecting the "narrow" FOV in Solex instead
+- Burst mode other than 12MP wide settings
+- Newer video formats along with new frame rates and FOV settings
+- Newer features like Linear, Hyperlapse, EIS, RAW
+- Whitebalance, ISO, Color, manual exposure settings (also never worked with a Hero 4)
+- Setting of EV and protune in other modes than video (also never worked with a Hero 4)
+- The Gopro will not turn off automatically.
 
 # 5. To do list
-- Add automatic Gopro model detection.
-- Determine a fix for the photo resolution settings and burst mode settings
+- Check if menu extensions to support the new features can be added to Solex
 - Work on an adaptor to fit the HERO5/6/7 into the Solo gimbal
 
