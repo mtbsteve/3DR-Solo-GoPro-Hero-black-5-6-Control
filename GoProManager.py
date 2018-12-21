@@ -8,6 +8,7 @@ import threading
 import time
 import monotonic
 import math
+import signal
 from pymavlink import mavutil
 
 sys.path.append(os.path.realpath(''))
@@ -21,8 +22,13 @@ import struct
 from PyMata.pymata import PyMata
 
 logger = shotLogger.logger
+# Gopro Mod
 SOLO_MOD = "GOPRO"
 GOPRO_FLUSH = 7
+OUTPUT1 = 8
+OUTPUT2 = 9
+HANDSHAKE = 10
+PYMATA_STATUS = 11
 
 # tuple of message types that we handle
 GOPROMESSAGES = \
@@ -92,14 +98,25 @@ REQUERY_COMMANDS = \
 class GoProManager():
     def __init__(self, shotMgr):
         # GoPro heartbeat state
-        if SOLO_MOD == "GOPRO":
-            logger.log("[shotmanager]: try to open Arduino PyMata")
-            self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
-            logger.log("[shotmanager]: Arduino PyMata OPENED - OK")
-            # here we add the check for the Gopro model
-            # in the meantime we treat it as a Hero 4
-            self.status=2
-            self.model = MODEL_HERO4_BLACK
+        if SOLO_MOD == "GOPRO":    
+            try:
+                logger.log("[gopromanager-arduino]: try to open Arduino PyMata")
+                self.arduinoBoard = PyMata("/dev/ttyACM0", verbose=True)
+                logger.log("[gopromanager-arduino]: Arduino PyMata OPENED - OK")
+                self.arduinoBoard.set_pin_mode(OUTPUT1, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                self.arduinoBoard.set_pin_mode(OUTPUT2, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                # register callback
+                logger.log("[gopromanager-arduino]: try to register callback")
+                self.arduinoBoard.set_pin_mode(HANDSHAKE, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL, self.goproModelType)
+                logger.log("[gopromanager-arduino]: Arduino PyMata callback registered")  
+                # tell the Arduino we are ready
+                self.arduinoBoard.digital_write(PYMATA_STATUS, 1)
+            except:
+                logger.log("[gopromanager-arduino]: Error in communication to Arduino")
+
+            self.status = 0
+            self.model = MODEL_NONE
+            # enter here the default settings of your Gopro
             self.captureMode = CAPTURE_MODE_VIDEO
             self.isRecording = False
             self.battery = 1
@@ -176,7 +193,7 @@ class GoProManager():
         captureMode = state.capture_mode
         isRecording = (state.flags & mavutil.mavlink.GOPRO_FLAG_RECORDING) != 0
         sendState = False
-
+        logger.log("[gopro-test]: state_callback %s" % status)
         if self.status != status:
             self.status = status
             logger.log("[gopro]: Gopro status changed to %d"%(self.status))
@@ -393,10 +410,16 @@ class GoProManager():
                     self.captureMode = captureMode
                     if value[0] == 0:
                         self.setGoProCommandArduino(4)  # set video mode
+                        self.setGoProCommandArduino(89)  # set submode video
                     if value[0] == 1:
                         self.setGoProCommandArduino(5)  # set photo mode
+                        self.setGoProCommandArduino(93)  # set submode single photo
                     if value[0] == 4:
                         self.setGoProCommandArduino(6)  # set photo burst mode
+                        self.setGoProCommandArduino(96)  # set submode burst
+                    if value[0] == 5:
+                        self.setGoProCommandArduino(4)  # set video mode
+                        self.setGoProCommandArduino(110)  # set video timewarp submode
                     sendState = True
                     logger.log("[gopro-arduino]: Gopro capture mode changed to %d"%(self.captureMode))
                     
@@ -407,11 +430,11 @@ class GoProManager():
                 videoFormat = VIDEO_FORMAT_NTSC if (value[3]) == 0 else VIDEO_FORMAT_PAL
                 if self.videoResolution != videoResolution:
                     self.videoResolution = videoResolution
-                    if value[0] == 0:
+                    if (value[0] == 0 and (self.model == MODEL_HERO4_BLACK or self.model == MODEL_HERO5_BLACK)):
                         self.setGoProCommandArduino(45)  # set video resolution 480
                     if value[0] == 1:
                         self.setGoProCommandArduino(44)  # set video resolution 720
-                    if value[0] == 2:
+                    if (value[0] == 2 and (self.model != MODEL_HERO6_BLACK)):
                         self.setGoProCommandArduino(42)  # set video resolution 960
                     if value[0] == 3:
                         self.setGoProCommandArduino(41)  # set video resolution 1080
@@ -423,7 +446,7 @@ class GoProManager():
                         self.setGoProCommandArduino(36)  # set video resolution 2,7k
                     if value[0] == 8:
                         self.setGoProCommandArduino(34)  # set video resolution 4k
-                    if value[0] == 10:
+                    if (value[0] == 10 and (self.model == MODEL_HERO4_BLACK or self.model == MODEL_HERO5_BLACK)):
                         self.setGoProCommandArduino(43)  # set video resolution 720superwide
                     if value[0] == 11:
                         self.setGoProCommandArduino(40)  # set video resolution 1080p superview
@@ -465,9 +488,11 @@ class GoProManager():
                     self.videoFieldOfView = videoFieldOfView
                     if value[2] == 0:
                         self.setGoProCommandArduino(57)  # set video fov wide
-                    if value[2] == 1:
+                    if (value[2] == 1 and (self.model == MODEL_HERO4_BLACK or self.model == MODEL_HERO5_BLACK)):
                         self.setGoProCommandArduino(58)  # set video fov medium
-                    if value[2] == 2:
+                    if (value[2] == 2 and (self.model == MODEL_HERO4_BLACK or self.model == MODEL_HERO5_BLACK)):
+                        self.setGoProCommandArduino(59)  # set video fov Narrow
+                    if (value[2] == 3 and (self.model != MODEL_HERO4_BLACK)):
                         self.setGoProCommandArduino(61)  # set video fov LINEAR corresponds to Solex Narrow
                     sendState = True
                     logger.log("[gopro-arduino]: Gopro video field of view changed to %d"%(self.videoFieldOfView))
@@ -482,7 +507,7 @@ class GoProManager():
                     logger.log("[gopro-arduino]: Gopro video format changed to %d"%(self.videoFormat))
   
             if command == 6: # set lowlight on off
-                videoLowLight = value[0] != 0
+                videoLowLight = value[0] 
                 if self.videoLowLight != videoLowLight:
                     self.videoLowLight = videoLowLight
                     if value[0] == 0:
@@ -493,7 +518,7 @@ class GoProManager():
                     logger.log("[gopro-arduino]: Gopro low light changed to %d"%(self.videoLowLight))
                     
             if command == 9: # set video protune on off
-                videoProtune = value[0] != 0
+                videoProtune = value[0]
                 if self.videoProtune != videoProtune:
                     self.videoProtune = videoProtune
                     if value[0] == 0:
@@ -503,21 +528,68 @@ class GoProManager():
                     sendState = True
                     logger.log("[gopro-arduino]: Gopro video protune changed to %d"%(self.videoProtune))
             
+            if command == 18: # set video stabilization on off
+                videoEIS = value[0]
+                if self.videoEIS != videoEIS:
+                    self.videoEIS = videoEIS
+                    if value[0] == 0:
+                        self.setGoProCommandArduino(100)  # set EIS off
+                    if value[0] == 1:
+                        self.setGoProCommandArduino(99)  # set EIS on   
+                    sendState = True
+                    logger.log("[gopro-arduino]: Gopro video EIS changed to %d"%(self.videoEIS))
+            
+            if command == 20: # set video time warp speed
+                videoWARP = value[0]
+                if self.videoWARP != videoWARP:
+                    self.videoWARP = videoWARP
+                    if value[0] == 1:
+                        self.setGoProCommandArduino(111)  # set timewarp speed 2
+                    if value[0] == 2:
+                        self.setGoProCommandArduino(112)  # set timewarp speed 5   
+                    if value[0] == 3:
+                        self.setGoProCommandArduino(113)  # set timewarp speed 10 
+                    if value[0] == 4:
+                        self.setGoProCommandArduino(114)  # set timewarp speed 15  
+                    if value[0] == 5:
+                        self.setGoProCommandArduino(115)  # set timewarp speed 30  
+                    sendState = True
+                    logger.log("[gopro-arduino]: Gopro video timewarp speed changed to %d"%(self.videoWARP))
+                    
             if command == 7: # photo resolution settings
                 photoResolution = value[0]
                 if self.photoResolution != photoResolution:
                     self.photoResolution = photoResolution
-                    if value[0] == 0:
+                    if (value[0] == 0 and self.model == MODEL_HERO4_BLACK):
                         self.setGoProCommandArduino(67)  # set res to 5MP
-                    if value[0] == 1:
+                    if (value[0] == 1 and self.model == MODEL_HERO4_BLACK):
                         self.setGoProCommandArduino(66)  # set res to 7MP medium
-                    if value[0] == 2:
+                    if (value[0] == 2 and self.model == MODEL_HERO4_BLACK):
                         self.setGoProCommandArduino(65)  # set res to 7MP wide
                     if value[0] == 4:
-                        self.setGoProCommandArduino(64)  # set res to 12MP                        
+                        self.setGoProCommandArduino(64)  # set res to 12MP wide                 
+                    if value[0] == 5:
+                        self.setGoProCommandArduino(101)  # set res to 12MP linear        
+                    if value[0] == 6:
+                        self.setGoProCommandArduino(102)  # set res to 12MP medium        
+                    if value[0] == 7:
+                        self.setGoProCommandArduino(103)  # set res to 12MP narrow        
                     sendState = True
                     logger.log("[gopro]: Gopro photo resolution changed to %d"%(self.photoResolution))
-   
+
+            if command == 16: # set superphoto mode for Hero 7 black only 
+                superPhoto = value[0]
+                if self.superPhoto != superPhoto:
+                    self.superPhoto = superPhoto
+                    if value[0] == 0:
+                        self.setGoProCommandArduino(104)  # set superphoto off
+                    if value[0] == 1:
+                        self.setGoProCommandArduino(105)  # set superphoto on   
+                    if value[0] == 2:
+                        self.setGoProCommandArduino(106)  # set HDR only 
+                    sendState = True
+                    logger.log("[gopro-arduino]: Gopro superphoto changed to %d"%(self.superPhoto))
+                    
             if command == 8: # burst rate settings
                 photoBurstRate = value[0]
                 if self.photoBurstRate != photoBurstRate:
@@ -716,7 +788,11 @@ class GoProManager():
             self.handleRecordCommand(self.captureMode, startstop)
         elif type == app_packet.GOPRO_REQUEST_STATE:
             logger.log("[gopro-test]: app.packet.goprorequeststate")
-            self.sendState()
+            if (SOLO_MOD == "GOPRO"):
+                chk = [1,1,1] 
+                self.goproModelType(chk)
+            else:
+                self.sendState()
         elif type == app_packet.GOPRO_SET_EXTENDED_REQUEST:
             (command, value1, value2, value3, value4, ) = struct.unpack("<HBBBB", data)
             logger.log("[gopro-test]: app.packet.goprosetrequest-command %d"%(command))
@@ -837,7 +913,7 @@ class GoProManager():
             self.arduinoBoard.digital_write(GOPRO_FLUSH, 0)
             for i in range(7):
                 self.arduinoBoard.digital_write(i, int(bitarr[i]))
-                time.sleep(0.1)
+                # time.sleep(0.1)
             #flush and execute the command, then reset 
             self.arduinoBoard.digital_write(GOPRO_FLUSH, 1)
             time.sleep(0.3)   #give time to execute on the Gopro side
@@ -845,3 +921,39 @@ class GoProManager():
             logger.log("[gopro-arduino]: bitarray sent to Arduino: %s"%(bitarr))
         except:   
             logger.log("[gopro-arduino]: Error in communication to Arduino")
+            
+    def goproModelType(self, data): 
+        #logger.log("[gopro-arduino]: handshake status received from arduino: %s"%(data[2]))
+        # if (data[2] == True): #if handshake is True - meaning a new value has been determined
+        x = str(self.arduinoBoard.digital_read(OUTPUT1)) + str(self.arduinoBoard.digital_read(OUTPUT2)) 
+        getmodel = int(x, 2)
+        logger.log("[gopro-arduino]: model received from arduino: %s"%(getmodel))
+        if getmodel == 0:
+            self.status = mavutil.mavlink.GOPRO_HEARTBEAT_STATUS_DISCONNECTED
+            self.model = MODEL_NONE #no valid gopro detected
+            exceptStr = "no supported camera"
+        elif getmodel == 1:
+            self.status = 2
+            self.model = MODEL_HERO4_BLACK #as long as MODEL_HERO5_BLACK is not supported in Solex
+            exceptStr = "Gopro Hero 5 black or Session connected"
+        elif getmodel == 2:
+            self.status = 2
+            self.model = MODEL_HERO4_BLACK #MODEL_HERO6_BLACK
+            exceptStr = "Gopro Hero 6 black connected"
+        elif getmodel == 3:
+            self.status = 2
+            self.model = MODEL_HERO4_BLACK #MODEL_HERO7_BLACK
+            exceptStr = "Gopro Hero 7 black connected"
+        else:
+            # in the meantime we treat all others as a Hero 4
+            self.model = MODEL_HERO4_BLACK    # send status to app
+            exceptStr = "no valid camera assuming Hero 4"
+        # update Gopro model in Solex
+        logger.log("[gopro]: rstatus %d."%(self.status))
+        logger.log("[gopro]: rmodel %d."%(self.model))
+        self.sendState()
+        if self.shotMgr.appMgr.isAppConnected():
+            packet = struct.pack('<II%ds' % (len(exceptStr)), app_packet.SOLO_MESSAGE_SHOTMANAGER_ERROR, len(exceptStr), exceptStr)
+            self.shotMgr.appMgr.client.send(packet)
+            # sleep to make sure the packet goes out
+            time.sleep(1)   
