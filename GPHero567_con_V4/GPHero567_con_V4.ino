@@ -136,6 +136,8 @@ char gpserver[] = "10.5.5.9";
 const int WOLPort = 7; // 7 or 9
 byte gopro_mac[6];  
 String requestURL;
+int handshake_toggle = 0; //control the callback to Solo
+int gopro_state_sent = 0; //checks if no gopro was connected
 
 //**************   Setup Wifi connection to Gopro
 WiFiClient client;
@@ -838,7 +840,6 @@ void setup()
     delay (500);
     while (true);
   }
-  
   // Initialize the GoPro handshake bitmap:
   for(int i=0; i<8; i++){
     gpFunctionpattern[i] = digitalRead(i);
@@ -903,10 +904,12 @@ void loop()
     // if we are connected now to a gopro, lets now determine the model
     if (WiFi.status() == WL_CONNECTED) {
       whichGoproModel();
+      gopro_state_sent = 0;
     }
-    else {
+    else if (gopro_state_sent == 0) {
       send_gopro_model_to_solo(0); //no Gopro connected
-    }
+      gopro_state_sent = 1;
+      }
   }
    
   //Serial.println("in the loop and connected!");
@@ -1923,8 +1926,13 @@ void send_gopro_model_to_solo(int gopro_model) {
    // write Hero model back
    digitalWrite (8, HIGH && (gopro_model & B00000010)); 
    digitalWrite (9, HIGH && (gopro_model & B00000001)); 
-   digitalWrite(10, HIGH); // flush the data and initiate callback
-   delay (1000);
-   digitalWrite(10, LOW); // reset
-   
+   if (handshake_toggle == 0) {
+      digitalWrite(10, HIGH); // flush the data and initiate callback
+      handshake_toggle = 1;
+      }
+   else {
+      digitalWrite(10, LOW); // flush the data and initiate callback
+      handshake_toggle = 0;
+      }
+   delay(2000);
 }
