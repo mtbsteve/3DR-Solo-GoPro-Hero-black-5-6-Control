@@ -1854,10 +1854,15 @@ void connectToGoPro() {
 void whichGoproModel() {
   client.stop();
   int gopro_model = 0;
+  bool gpsleep = false;
   while (!client.connect(gpserver, 80)) {
     // we are connected, but Gopro seems to sleep
-    cameraOn(gopro_mac, 6); // try to wake it up
-  }
+    if (gpsleep == false) {
+       cameraOn(gopro_mac, 6); // try to wake it up
+       gpsleep = true;
+       }
+    client.stop();
+    }
   delay(1000);
   //Serial.println("connected to server to find out gopro model");
   // Make a HTTP request:
@@ -1926,13 +1931,8 @@ void send_gopro_model_to_solo(int gopro_model) {
    // write Hero model back
    digitalWrite (8, HIGH && (gopro_model & B00000010)); 
    digitalWrite (9, HIGH && (gopro_model & B00000001)); 
-   if (handshake_toggle == 0) {
-      digitalWrite(10, HIGH); // flush the data and initiate callback
-      handshake_toggle = 1;
-      }
-   else {
-      digitalWrite(10, LOW); // flush the data and initiate callback
-      handshake_toggle = 0;
-      }
-   delay(2000);
+   //if (handshake_toggle == 0) {
+   digitalWrite(10, HIGH); // flush the data and initiate callback
+   delay(1000);
+   digitalWrite(10, LOW); // flush the data and initiate callback
 }
