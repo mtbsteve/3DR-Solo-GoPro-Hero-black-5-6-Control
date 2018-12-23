@@ -82,6 +82,7 @@ The software supports in addition the major cool features of the Hero 5, 6, and 
 
 - The software  recognizes the camera model connected.
 - You can hot-swap between all registered Gopro cameras w/o restarting Solo
+- Voice output and text prompt on the connected camera model in Solex.
 - Gopro will automaticallly turn on when Solo is powered on if the camera is in sleep mode
 
 # 4. Exceptions and known limitations
