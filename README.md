@@ -66,16 +66,8 @@ A current limitation is that Solo does not know the Gopro settings when we turn 
 
 - Capture Mode: Video
 - Video Format: PAL
-- Video Resolution: 1080p
-- Video Frame rate: 50FPS
-- FOV: Linear (yes!)
-- LowLight: on
-- Photo Resolution: 12MP wide (limitation with the newer Gopros and Solex at the moment)
-- Burst Rate 5/1
-- Protune: on
-- EV setting 0
 
-You may change those defaults of course in the gopromanager.py file
+You may change those defaults of course in the gopromanager.py file. All other parameters will be used as set by default in your Gopro. 
 
 Don't foreget to turn on your gopro wifi.
 
@@ -98,11 +90,12 @@ The newer Gopro models differ in several areas from the Hero 4. In order to get 
 - Burst mode other than 12MP wide settings
 - Newer video formats along with new frame rates and FOV settings
 - Newer features like Linear, Hyperlapse, EIS, RAW
-- Whitebalance, ISO, Color, manual exposure settings (also never worked with a Hero 4)
+- Whitebalance, ISO, Color, manual exposure settings (also never worked with the original software)
 - Setting of EV and protune in other modes than video (also never worked with a Hero 4)
 - The Gopro will not turn off automatically. (Current limitation is in the Arducopter code - may be fixed with AC3.7)
 
 # 5. To do list
 - Check if menu extensions to support the new features can be added to Solex
 - Work on a mod to fit the HERO5/6/7 into the Solo gimbal (someone need to sponsor a broken or trashed gimbal to try out the modding)
+- Inquire actual Gopro settings for video/photo mode, video format,  
 
