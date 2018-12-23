@@ -80,7 +80,8 @@ Compatible with Gopro Hero 5 Black and Hero 5 Session, Hero 6 Black and Hero 7 B
 All feature settings in Solex are supported with the exceptions are listed in the next section.
 The software supports in addition the major cool features of the Hero 5, 6, and 7 models, such as video stabilization, linear mode, 4K60FPS, Timewarp, Superphoto, and so on. Note that such features are not (yet) accessible threough Solex since some extensions to the current camera menus are needed.
 
-- The software  recognizes the camera model connected. 
+- The software  recognizes the camera model connected.
+- You can hot-swap between all registered Gopro cameras w/o restarting Solo
 - Gopro will automaticallly turn on when Solo is powered on if the camera is in sleep mode
 
 # 4. Exceptions and known limitations
@@ -96,5 +97,5 @@ The newer Gopro models differ in several areas from the Hero 4. In order to get 
 # 5. To do list
 - Check if menu extensions to support the new features can be added to Solex
 - Work on a mod to fit the HERO5/6/7 into the Solo gimbal (someone need to sponsor a broken or trashed gimbal to try out the modding)
-- Inquire actual Gopro settings for video/photo mode, video/photo format. 
+- Inquire actual Gopro settings for video/photo mode, video/photo format and pre-set them in Solex. 
 
