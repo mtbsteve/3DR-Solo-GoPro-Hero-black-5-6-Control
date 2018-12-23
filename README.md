@@ -93,9 +93,8 @@ The software supports in addition the major cool features of the Hero 5, 6, and 
 The newer Gopro models differ in several areas from the Hero 4. In order to get it working with the current Solex version, we set the GoPro model to a Hero 4, which causes that some settings are not accessible in the Solex menus:
 
 - Newer video formats along with new frame rates and FOV settings
-- Newer features like Linear, Hyperlapse, EIS, RAW
+- Newer features like Linear, Hyperlapse, EIS, RAW implemented but not yet accessible 
 - Whitebalance, ISO, Color, manual exposure settings (also never worked with the original software)
-- Setting of EV and protune in other modes than video (also never worked with a Hero 4)
 - The Gopro will not turn off automatically. (Current limitation is in the Arducopter code - may be fixed with AC3.7)
 
 # 5. To do list
