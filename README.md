@@ -85,9 +85,8 @@ The software supports in addition the major cool features of the Hero 5, 6, and 
 
 # 4. Exceptions and known limitations
 
-The newer Gopro models differ in several areas from the Hero 4. In order to get it working with the current Solex version, we set the GoPro model to a Hero 4, which causes that some settings do not work yet:
+The newer Gopro models differ in several areas from the Hero 4. In order to get it working with the current Solex version, we set the GoPro model to a Hero 4, which causes that some settings are not accessible in the Solex menus:
 
-- Burst mode other than 12MP wide settings
 - Newer video formats along with new frame rates and FOV settings
 - Newer features like Linear, Hyperlapse, EIS, RAW
 - Whitebalance, ISO, Color, manual exposure settings (also never worked with the original software)
@@ -97,5 +96,5 @@ The newer Gopro models differ in several areas from the Hero 4. In order to get 
 # 5. To do list
 - Check if menu extensions to support the new features can be added to Solex
 - Work on a mod to fit the HERO5/6/7 into the Solo gimbal (someone need to sponsor a broken or trashed gimbal to try out the modding)
-- Inquire actual Gopro settings for video/photo mode, video format,  
+- Inquire actual Gopro settings for video/photo mode, video/photo format. 
 
