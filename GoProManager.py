@@ -485,7 +485,7 @@ class GoProManager():
                     sendState = True
                     logger.log("[gopro-arduino]: Gopro video format changed to %d"%(self.videoFormat))
   
-            if command == 6: # set lowlight on off
+            if (command == 6): # set lowlight video on off
                 videoLowLight = value[0] 
                 if self.videoLowLight != videoLowLight:
                     self.videoLowLight = videoLowLight
@@ -494,9 +494,9 @@ class GoProManager():
                     if value[0] == 1:
                         self.setGoProCommandArduino(62)  # set low light on
                     sendState = True
-                    logger.log("[gopro-arduino]: Gopro low light changed to %d"%(self.videoLowLight))
-                    
-            if command == 9: # set video protune on off
+                    logger.log("[gopro-arduino]: Gopro video low light changed to %d"%(self.videoLowLight))
+            
+            if (command == 9 and self.captureMode == 0): # set video protune on off
                 videoProtune = value[0]
                 if self.videoProtune != videoProtune:
                     self.videoProtune = videoProtune
@@ -506,6 +506,28 @@ class GoProManager():
                         self.setGoProCommandArduino(83)  # set protune on   
                     sendState = True
                     logger.log("[gopro-arduino]: Gopro video protune changed to %d"%(self.videoProtune))
+            
+            if (command == 9 and self.captureMode == 1): # set photo protune on off
+                videoProtune = value[0]
+                if self.videoProtune != videoProtune:
+                    self.videoProtune = videoProtune
+                    if value[0] == 0:
+                        self.setGoProCommandArduino(86)  # set protune off
+                    if value[0] == 1:
+                        self.setGoProCommandArduino(85)  # set protune on   
+                    sendState = True
+                    logger.log("[gopro-arduino]: Gopro photo protune changed to %d"%(self.videoProtune))
+
+            if (command == 9 and self.captureMode == 4): # set burst protune on off
+                videoProtune = value[0]
+                if self.videoProtune != videoProtune:
+                    self.videoProtune = videoProtune
+                    if value[0] == 0:
+                        self.setGoProCommandArduino(88)  # set protune off
+                    if value[0] == 1:
+                        self.setGoProCommandArduino(87)  # set protune on   
+                    sendState = True
+                    logger.log("[gopro-arduino]: Gopro burst protune changed to %d"%(self.videoProtune))
             
             if command == 18: # set video stabilization on off
                 videoEIS = value[0]
@@ -594,7 +616,7 @@ class GoProManager():
                     sendState = True
                     logger.log("[gopro]: Gopro photo burst rate changed to %d"%(self.photoBurstRate))   
             
-            if command == 14: # video exposure settings 
+            if (command == 14 and self.captureMode == 0): # video exposure settings 
                 videoProtuneExposure = value[0]
                 if self.videoProtuneExposure != videoProtuneExposure:
                     self.videoProtuneExposure = videoProtuneExposure
@@ -618,7 +640,58 @@ class GoProManager():
                         self.setGoProCommandArduino(7)  # set video exposure 2
                     sendState = True
                     logger.log("[gopro]: Gopro video protune exposure changed to %d"%(self.videoProtuneExposure))
-                
+            
+            if (command == 14 and self.captureMode == 1): # photo exposure settings 
+                videoProtuneExposure = value[0]
+                if self.videoProtuneExposure != videoProtuneExposure:
+                    self.videoProtuneExposure = videoProtuneExposure
+                    if value[0] == 6:
+                        self.setGoProCommandArduino(24)  # set photo exposure -2
+                    if value[0] == 7:
+                        self.setGoProCommandArduino(23)  # set photo exposure -1,5
+                    if value[0] == 8:
+                        self.setGoProCommandArduino(22)  # set photo exposure -1
+                    if value[0] == 9:
+                        self.setGoProCommandArduino(21)  # set photo exposure -0,5
+                    if value[0] == 10:
+                        self.setGoProCommandArduino(20)  # set photo exposure 0
+                    if value[0] == 11:
+                        self.setGoProCommandArduino(19)  # set photo exposure 0,5
+                    if value[0] == 12:
+                        self.setGoProCommandArduino(18)  # set photo exposure 1
+                    if value[0] == 13:
+                        self.setGoProCommandArduino(17)  # set photo exposure 1,5
+                    if value[0] == 14:
+                        self.setGoProCommandArduino(16)  # set photo exposure 2
+                    sendState = True
+                    logger.log("[gopro]: Gopro photo protune exposure changed to %d"%(self.videoProtuneExposure))    
+                    
+            if (command == 14 and self.captureMode == 4): # burst exposure settings 
+                videoProtuneExposure = value[0]
+                if self.videoProtuneExposure != videoProtuneExposure:
+                    self.videoProtuneExposure = videoProtuneExposure
+                    if value[0] == 6:
+                        self.setGoProCommandArduino(33)  # set burst exposure -2
+                    if value[0] == 7:
+                        self.setGoProCommandArduino(32)  # set burst exposure -1,5
+                    if value[0] == 8:
+                        self.setGoProCommandArduino(31)  # set burst exposure -1
+                    if value[0] == 9:
+                        self.setGoProCommandArduino(30)  # set burst exposure -0,5
+                    if value[0] == 10:
+                        self.setGoProCommandArduino(29)  # set burst exposure 0
+                    if value[0] == 11:
+                        self.setGoProCommandArduino(28)  # set burst exposure 0,5
+                    if value[0] == 12:
+                        self.setGoProCommandArduino(27)  # set burst exposure 1
+                    if value[0] == 13:
+                        self.setGoProCommandArduino(26)  # set burst exposure 1,5
+                    if value[0] == 14:
+                        self.setGoProCommandArduino(25)  # set burst exposure 2
+                    sendState = True
+                    logger.log("[gopro]: Gopro burst protune exposure changed to %d"%(self.videoProtuneExposure))            
+                    
+                    
             if sendState:
                 self.sendState()
  #########################################################
