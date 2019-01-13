@@ -22,13 +22,23 @@ import struct
 from PyMata.pymata import PyMata
 
 logger = shotLogger.logger
-# Gopro Mod
+# Gopro Mod parameters
 SOLO_MOD = "GOPRO"
+# set SOLO_MOD = "" for the regular Gimbal with a Hero 3+ or 4
+# Arduino pins used for the MKR1000 board
 GOPRO_FLUSH = 7
 OUTPUT1 = 8
 OUTPUT2 = 9
 HANDSHAKE = 10
 PYMATA_STATUS = 11
+RECSTATE = 12
+BATTSTATE1 = 13
+BATTSTATE2 = 14
+VIDFORMAT = 15
+GPMODE1 = 17
+GPMODE2 = 19
+GPMODE3 = 20
+GPMODE4 = 21
 
 # tuple of message types that we handle
 GOPROMESSAGES = \
@@ -105,16 +115,31 @@ class GoProManager():
                 logger.log("[gopromanager-arduino]: Arduino PyMata OPENED - OK")
                 self.arduinoBoard.set_pin_mode(OUTPUT1, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
                 self.arduinoBoard.set_pin_mode(OUTPUT2, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                self.arduinoBoard.set_pin_mode(RECSTATE, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                self.arduinoBoard.set_pin_mode(BATTSTATE1, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                self.arduinoBoard.set_pin_mode(BATTSTATE2, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                self.arduinoBoard.set_pin_mode(VIDFORMAT, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                self.arduinoBoard.set_pin_mode(GPMODE1, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                self.arduinoBoard.set_pin_mode(GPMODE2, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                self.arduinoBoard.set_pin_mode(GPMODE3, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
+                self.arduinoBoard.set_pin_mode(GPMODE4, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)                
                 self.arduinoBoard.set_pin_mode(HANDSHAKE, self.arduinoBoard.INPUT, self.arduinoBoard.DIGITAL)
                 # register callback latch
-                logger.log("[gopromanager-arduino]: try to register latch")
+                logger.log("[gopromanager-arduino]: try to register latch for goro model")
                 self.arduinoBoard.set_digital_latch(HANDSHAKE, self.arduinoBoard.DIGITAL_LATCH_HIGH, self.goproModelType)
-                logger.log("[gopromanager-arduino]: Arduino PyMata latch registered")  
+                logger.log("[gopromanager-arduino]: Arduino PyMata latch for gopro registered") 
+                #logger.log("[gopromanager-arduino]: try to register latch for rec state")
+                #self.arduinoBoard.set_digital_latch(RECSTATE, self.arduinoBoard.DIGITAL_LATCH_HIGH, self.goprorecordState)
+                #logger.log("[gopromanager-arduino]: Arduino PyMata latch for rec state registered")  
                 # tell the Arduino we are ready
                 self.arduinoBoard.digital_write(PYMATA_STATUS, 1)
             except:
                 logger.log("[gopromanager-arduino]: Error in communication to Arduino")
-
+            # init handover status
+            self.battstate = 0
+            self.getmodel = -1
+            self.gpmode = 0 
+                
         self.status = mavutil.mavlink.GOPRO_HEARTBEAT_STATUS_DISCONNECTED
         self.model = MODEL_NONE
         self.captureMode = CAPTURE_MODE_VIDEO
@@ -122,18 +147,18 @@ class GoProManager():
         # Additional GoPro state
         self.battery = 0
         self.videoFormat = VIDEO_FORMAT_PAL
-        self.videoResolution = 0
-        self.videoFrameRate = 0
-        self.videoFieldOfView = 0
-        self.videoLowLight = False
-        self.photoResolution = 0
+        self.videoResolution = 3
+        self.videoFrameRate = 7
+        self.videoFieldOfView = 3
+        self.videoLowLight = True
+        self.photoResolution = 5
         self.photoBurstRate = 0
-        self.videoProtune = False
+        self.videoProtune = True
         self.videoProtuneWhiteBalance = 0
         self.videoProtuneColor = 0
         self.videoProtuneGain = 0
         self.videoProtuneSharpness = 0
-        self.videoProtuneExposure = 0
+        self.videoProtuneExposure = 10
 
         self.shotMgr = shotMgr
         # This exists because we can't seem to send multiple messages in a stream to the gopro.
@@ -156,7 +181,6 @@ class GoProManager():
             logger.log("[gopro]: Error reading config file.")
             logger.log(str(ex))
             self.enabled = True
-
         logger.log("[gopro]: Inited GoProManager")
 
     def state_callback(self, vehicle, name, message):
@@ -387,16 +411,16 @@ class GoProManager():
                 captureMode = value[0]
                 if self.captureMode != captureMode:
                     self.captureMode = captureMode
-                    if value[0] == 0:
+                    if (value[0] == CAPTURE_MODE_VIDEO):
                         self.setGoProCommandArduino(4)  # set video mode
                         self.setGoProCommandArduino(89)  # set submode video
-                    if value[0] == 1:
+                    if (value[0] == CAPTURE_MODE_PHOTO):
                         self.setGoProCommandArduino(5)  # set photo mode
                         self.setGoProCommandArduino(93)  # set submode single photo
-                    if value[0] == 4:
+                    if (value[0] == CAPTURE_MODE_MULTISHOT):
                         self.setGoProCommandArduino(6)  # set photo burst mode
                         self.setGoProCommandArduino(96)  # set submode burst
-                    if value[0] == 5:
+                    if (value[0] == CAPTURE_MODE_TIMEWARP):
                         self.setGoProCommandArduino(4)  # set video mode
                         self.setGoProCommandArduino(110)  # set video timewarp submode
                     sendState = True
@@ -478,9 +502,9 @@ class GoProManager():
         
                 if self.videoFormat != videoFormat:
                     self.videoFormat = videoFormat
-                    if value[3] == 0:
+                    if (value[3] == VIDEO_FORMAT_NTSC):
                         self.setGoProCommandArduino(81)  # set video NTSC
-                    if value[3] == 1:
+                    if (value[3] == VIDEO_FORMAT_PAL):
                         self.setGoProCommandArduino(82)  # set video PAL
                     sendState = True
                     logger.log("[gopro-arduino]: Gopro video format changed to %d"%(self.videoFormat))
@@ -760,8 +784,8 @@ class GoProManager():
             else:
                 return
 
-            # don't start recording if we're already recording
-            if self.isRecording and startstop == 1:
+            # don't start recording if we're already recording nor dont stop if we are not recording
+            if (self.isRecording and startstop == 1) or (self.isRecording == 0 and startstop == 0):
                 return
 
             logger.log("[gopro]: Sending command for video recording: %d"%(startstop))
@@ -971,37 +995,127 @@ class GoProManager():
             logger.log("[gopro-arduino]: Error in communication to Arduino")
             
     def goproModelType(self, data): 
-        x = str(self.arduinoBoard.digital_read(OUTPUT1)) + str(self.arduinoBoard.digital_read(OUTPUT2)) 
-        getmodel = int(x, 2)
-        logger.log("[gopro-arduino]: model received from arduino: %s"%(getmodel))
-        if getmodel == 0:
-            self.status = mavutil.mavlink.GOPRO_HEARTBEAT_STATUS_DISCONNECTED
-            self.model = MODEL_NONE #no valid gopro detected
-            exceptStr = "no supported Gopro in range"
-        elif getmodel == 1:
-            self.status = 2
-            self.model = MODEL_HERO5_BLACK
-            exceptStr = "Gopro Hero 5 black or Session connected"
-        elif getmodel == 2:
-            self.status = 2
-            self.model = MODEL_HERO6_BLACK
-            exceptStr = "Gopro Hero 6 black connected"
-        elif getmodel == 3:
-            self.status = 2
-            self.model = MODEL_HERO7_BLACK
-            exceptStr = "Gopro Hero 7 black connected"
-        else:
+        sendState = False
+        
+        try:
+            x = str(self.arduinoBoard.digital_read(OUTPUT1)) + str(self.arduinoBoard.digital_read(OUTPUT2)) 
+            getmodel = int(x, 2)
+            logger.log("[gopro-arduino]: model received from arduino: %s"%(getmodel))
+            y = str(self.arduinoBoard.digital_read(BATTSTATE1)) + str(self.arduinoBoard.digital_read(BATTSTATE2)) 
+            battstate = int(y, 2)
+            logger.log("[gopro-arduino]: battery status received from arduino: %s"%(battstate))
+            isRecording = self.arduinoBoard.digital_read(RECSTATE)
+            logger.log("[gopro-arduino]: recording status received from arduino: %s"%(isRecording))
+            videoFormat = self.arduinoBoard.digital_read(VIDFORMAT)
+            logger.log("[gopro-arduino]: video format received from arduino: %s"%(videoFormat))
+            z = str(self.arduinoBoard.digital_read(GPMODE1)) + str(self.arduinoBoard.digital_read(GPMODE2)) + str(self.arduinoBoard.digital_read(GPMODE3)) + str(self.arduinoBoard.digital_read(GPMODE4)) 
+            gpmode = int(z, 2)
+            logger.log("[gopro-arduino]: gopromode received from arduino: %s"%(gpmode))
+            
+        except:
+            logger.log("[gopro-arduino]: Error in communication to Arduino")
+            return
+
+        if (self.getmodel != getmodel):
+            self.getmodel = getmodel
+            sendState = True
+            if getmodel == 0:
+                self.status = STATUS_NO_GOPRO
+                self.model = MODEL_NONE #no valid gopro detected
+                self.battstate = 0
+                self.gpmode = 0 
+            
+                exceptStr = "no supported Gopro in range"
+            elif getmodel == 1:
+                self.status = STATUS_GOPRO_CONNECTED
+                self.model = MODEL_HERO5_BLACK
+                exceptStr = "Gopro Hero 5 black or Session connected"
+            elif getmodel == 2:
+                self.status = STATUS_GOPRO_CONNECTED
+                self.model = MODEL_HERO6_BLACK
+                exceptStr = "Gopro Hero 6 black connected"
+            elif getmodel == 3:
+                self.status = STATUS_GOPRO_CONNECTED
+                self.model = MODEL_HERO7_BLACK
+                exceptStr = "Gopro Hero 7 black connected"
+            else:
             # in the meantime we treat all others as a Hero 4
-            self.model = MODEL_HERO4_BLACK    # send status to app
-            exceptStr = "no valid camera assuming Hero 4"
+                self.status = STATUS_GOPRO_CONNECTED
+                self.model = MODEL_HERO4_BLACK    # send status to app
+                exceptStr = "no valid camera assuming Hero 4"
+            logger.log("[gopro-arduino]: new model %d."%(self.model))
+            # update Gopro parameters in Solex
+            logger.log("[gopro-arduino]: new status %d."%(self.status))
+            if self.shotMgr.appMgr.isAppConnected():
+                packet = struct.pack('<II%ds' % (len(exceptStr)), app_packet.SOLO_MESSAGE_SHOTMANAGER_ERROR, len(exceptStr), exceptStr)
+                self.shotMgr.appMgr.client.send(packet)
+                # sleep to make sure the packet goes out
+                time.sleep(1)  
+            
+        
+        if ((self.battstate != battstate) and (self.model != MODEL_NONE)):
+            self.battstate = battstate
+            self.battery = 1
+            sendState = True
+            if (self.battstate == 3):
+                exceptStr = "Gopro battery fully charged"
+            elif (self.battstate == 2):
+                exceptStr = "Gopro battery halfway charged"
+            elif (self.battstate == 1):
+                exceptStr = "Warning Gopro battery is getting low"
+            #elif ((self.battstate == 0) and (getmodel != 0)):
+            #    exceptStr = "Warning Gopro battery is empty"
+            logger.log("[arduino-gopro]: new battery status %d."%(self.battstate))
+            if self.shotMgr.appMgr.isAppConnected():
+                packet = struct.pack('<II%ds' % (len(exceptStr)), app_packet.SOLO_MESSAGE_SHOTMANAGER_ERROR, len(exceptStr), exceptStr)
+                self.shotMgr.appMgr.client.send(packet)
+                # sleep to make sure the packet goes out
+                time.sleep(1)   
+                
+        # the check for camara recording state is not reliably working yet and therefore disabled
+        #if (self.isRecording != isRecording):      
+        #    self.isRecording = isRecording
+        #    sendState = True
+        #    logger.log("[arduino-gopro]: new recording status %d."%(self.isRecording))
+            # update Gopro parameters in Solex
+            
+        if ((self.videoFormat != videoFormat) and (self.model != MODEL_NONE)):      
+            self.videoFormat = videoFormat
+            sendState = True
+            logger.log("[arduino-gopro]: new video format %d."%(self.videoFormat))
+            # update Gopro parameters in Solex
+ 
+        if ((self.gpmode != gpmode) and (self.model != MODEL_NONE)):
+            self.gpmode = gpmode
+            sendState = True
+            if (self.gpmode == 0):  # video mode selected
+                self.captureMode = CAPTURE_MODE_VIDEO
+            elif (self.gpmode == 1): # video loop mode selected
+                self.captureMode = CAPTURE_MODE_VIDEO_LOOP
+            elif (self.gpmode == 2): # night time lapse mode selected
+                self.captureMode = CAPTURE_MODE_NIGHT_TIMELAPSE
+            elif (self.gpmode == 3): # time warp mode selected
+                self.captureMode = CAPTURE_MODE_TIMEWARP
+            elif (self.gpmode == 4): # time lapse mode selected
+                self.captureMode = CAPTURE_MODE_TIMELAPSE
+            elif (self.gpmode == 5): # time lapse photo mode selected
+                self.captureMode = CAPTURE_MODE_TIMELAPSE_PHOTO
+            elif (self.gpmode == 6): # photo mode selected
+                self.captureMode = CAPTURE_MODE_PHOTO
+            elif (self.gpmode == 7): # serial photo mode selected
+                self.captureMode = CAPTURE_MODE_MULTISHOT
+            elif (self.gpmode == 8): # night photo mode selected
+                self.captureMode = CAPTURE_MODE_NIGHT_PHOTO
+            elif (self.gpmode == 9): # video plus photo mode selected
+                self.captureMode = CAPTURE_MODE_VIDEO_PHOTO
+            # update Gopro parameters in Solex
+            logger.log("[gopro-arduino]: new capture mode %d."%(self.captureMode))
+        
+        if (sendState == True):
+            # update Solex
+            self.sendState()    
+        
         # rearm latch
         self.arduinoBoard.set_digital_latch(HANDSHAKE, self.arduinoBoard.DIGITAL_LATCH_HIGH, self.goproModelType)
-        # update Gopro model in Solex
-        logger.log("[gopro]: new status %d."%(self.status))
-        logger.log("[gopro]: new model %d."%(self.model))
-        self.sendState()
-        if self.shotMgr.appMgr.isAppConnected():
-            packet = struct.pack('<II%ds' % (len(exceptStr)), app_packet.SOLO_MESSAGE_SHOTMANAGER_ERROR, len(exceptStr), exceptStr)
-            self.shotMgr.appMgr.client.send(packet)
-            # sleep to make sure the packet goes out
-            time.sleep(1)   
+        logger.log("[gopro-arduino]: latch rearmed")
+        
