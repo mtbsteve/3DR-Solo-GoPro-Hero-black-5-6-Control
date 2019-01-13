@@ -65,10 +65,11 @@ in the gopromanager.py file.
 
 ## 2.3. Setup your Gopro
  
-A current limitation is that Solo does not know the Gopro settings when we turn it on. Therefore, gopromanager assumes a default setting of your Gopro and you need to ensure that you have the following parameters set in your Gopro:
+A current limitation is that Solo does not know the Gopro settings when we turn it on. Therefore, gopromanager assumes a default setting of your Gopro and you need to ensure that you have the following parameters at startup set in your Gopro5, 6 or 7 Black:
 
-- Capture Mode: Video
-- Video Format: PAL
+- Video Resolution 1080p; FOV Linear, 60FPS
+- Protune and low light: on
+- Photo resolution 12MP linear
 
 You may change those defaults of course in the gopromanager.py file. All other parameters will be used as set by default in your Gopro. 
 
@@ -87,6 +88,7 @@ The software supports in addition the major cool features of the Hero 5, 6, and 
 - You can hot-swap between all registered Gopro cameras w/o restarting Solo
 - Voice output and text prompt on the connected camera model in Solex.
 - Gopro will automaticallly turn on when Solo is powered on if the camera is in sleep mode
+- Gopro battery monitoring: you will receive a warning message when the Gopro battery is getting low
 
 # 4. Exceptions and known limitations
 
@@ -100,5 +102,3 @@ The newer Gopro models differ in several areas from the Hero 4. In order to get 
 # 5. To do list
 - Check if menu extensions to support the new features can be added to Solex
 - Work on a mod to fit the HERO5/6/7 into the Solo gimbal (someone need to sponsor a broken or trashed gimbal to try out the modding)
-- Inquire actual Gopro settings for video/photo mode, video/photo format and pre-set them in Solex. 
-
