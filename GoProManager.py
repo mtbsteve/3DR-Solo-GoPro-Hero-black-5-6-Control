@@ -148,7 +148,7 @@ class GoProManager():
         self.battery = 0
         self.videoFormat = VIDEO_FORMAT_PAL
         self.videoResolution = 3
-        self.videoFrameRate = 7
+        self.videoFrameRate = 6
         self.videoFieldOfView = 3
         self.videoLowLight = True
         self.photoResolution = 5
@@ -1072,17 +1072,17 @@ class GoProManager():
                 # sleep to make sure the packet goes out
                 time.sleep(1)   
                 
-        # the check for camara recording state is not reliably working yet and therefore disabled
+        # the check for camara recording and video format state is not reliably working yet and therefore disabled
         #if (self.isRecording != isRecording):      
         #    self.isRecording = isRecording
         #    sendState = True
         #    logger.log("[arduino-gopro]: new recording status %d."%(self.isRecording))
             # update Gopro parameters in Solex
             
-        if ((self.videoFormat != videoFormat) and (self.model != MODEL_NONE)):      
-            self.videoFormat = videoFormat
-            sendState = True
-            logger.log("[arduino-gopro]: new video format %d."%(self.videoFormat))
+        #if ((self.videoFormat != videoFormat) and (self.model != MODEL_NONE)):      
+        #    self.videoFormat = videoFormat
+        #    sendState = True
+        #    logger.log("[arduino-gopro]: new video format %d."%(self.videoFormat))
             # update Gopro parameters in Solex
  
         if ((self.gpmode != gpmode) and (self.model != MODEL_NONE)):
