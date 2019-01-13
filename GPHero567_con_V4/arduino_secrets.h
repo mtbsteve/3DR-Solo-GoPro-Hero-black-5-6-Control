@@ -1,6 +1,0 @@
-#define SECRET_SSID1 "enter your Gopro ssid here"
-#define SECRET_PASS1 "enter your gopro wifi password here"
-#define SECRET_SSID2 ""
-#define SECRET_PASS2 ""
-#define SECRET_SSID3 ""
-#define SECRET_PASS3 ""
