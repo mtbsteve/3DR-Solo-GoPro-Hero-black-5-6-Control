@@ -67,7 +67,7 @@ in the gopromanager.py file.
  
 A current limitation is that Solo does not know the Gopro settings when we turn it on. Therefore, gopromanager assumes a default setting of your Gopro and you need to ensure that you have the following parameters at startup set in your Gopro5, 6 or 7 Black:
 
-- Video Resolution 1080p; FOV Linear, 60FPS
+- Video Resolution 1080p; FOV Linear, 50FPS, PAL
 - Protune and low light: on
 - Photo resolution 12MP linear
 
