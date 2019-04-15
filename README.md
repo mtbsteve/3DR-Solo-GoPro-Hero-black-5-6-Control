@@ -11,6 +11,7 @@ Video see here:
 - https://youtu.be/H4vh83SqS-Y
 - https://youtu.be/H4vh83SqS-Y
 - https://youtu.be/dY4mVUrN4QM
+- https://youtu.be/GhM7P2pMOfY
 
 # 1. Prerequisites
 - Requires an wifi capable Arduino such as the MKR1000
@@ -23,7 +24,7 @@ Video see here:
 ## 2.1. Hardware setup
 
 Solder the red LED to the A1 pin and the green LED to the A3 pin of the MKR1000. Use a 50 Ohm resistor to avoid overload.
-Connect the Arduino MKR1000 USB to the IMX USB port.
+Connect the Arduino MKR1000 USB to the IMX USB port. Make sure to set the USB Host mode by connecting the 3DRIO pin to Ground on the breakout board.
 
 LED Status indicator:
 - Red and green LED off,green on board LED on: board is powered, waiting for Solo to finalize GoproManager initialization.
@@ -63,6 +64,13 @@ to
 
 in the gopromanager.py file.
 
+If you are using the 3DR Solo Gimbal, you need also to disable the gopro callback functions in the shotmanager.py file located in the same /usr/bin directory. Therefore comment the following lines of code in the registerCallbacks() function in shotmanager.py:
+
+    # gopro manager callbacks (defined in gopro manager)
+    # self.vehicle.add_attribute_listener('gopro_status', self.goproManager.state_callback)
+    # self.vehicle.add_attribute_listener('gopro_get_response', self.goproManager.get_response_callback)
+    # self.vehicle.add_attribute_listener('gopro_set_response', self.goproManager.set_response_callback)
+
 ## 2.3. Setup your Gopro
  
 A current limitation is that Solo does not know the Gopro settings when we turn it on. Therefore, gopromanager assumes a default setting of your Gopro and you need to ensure that you have the following parameters at startup set in your Gopro5, 6 or 7 Black:
@@ -89,6 +97,7 @@ The software supports in addition the major cool features of the Hero 5, 6, and 
 - Voice output and text prompt on the connected camera model in Solex.
 - Gopro will automaticallly turn on when Solo is powered on if the camera is in sleep mode
 - Gopro battery monitoring: you will receive a warning message when the Gopro battery is getting low
+- Support for the 3DR Solo Gimbal, see video: https://youtu.be/GhM7P2pMOfY
 
 # 4. Exceptions and known limitations
 
@@ -101,4 +110,3 @@ The newer Gopro models differ in several areas from the Hero 4. In order to get 
 
 # 5. To do list
 - Check if menu extensions to support the new features can be added to Solex
-- Work on a mod to fit the HERO5/6/7 into the Solo gimbal (someone need to sponsor a broken or trashed gimbal to try out the modding)
